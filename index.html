@@ -1,1 +1,503 @@
-miaolifes
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安徽省2025年初中学业水平考试成绩查询系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "宋体", "SimSun", sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #E6F2FF;
+            color: #333;
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 10px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><text x="10" y="20" font-family="宋体" font-size="14">安徽省教育招生考试院</text></svg>');
+            background-repeat: repeat;
+        }
+        .container {
+            width: 800px;
+            margin: 20px auto;
+            background: white;
+            border: 1px solid #7F9DB9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(to bottom, #1E50A2, #0C3D8E);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 2px solid #FFCC00;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .header p {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .logo {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: #FFCC00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #1E50A2;
+            font-size: 14px;
+            border: 2px solid white;
+        }
+        .content {
+            padding: 20px;
+        }
+        .notice {
+            background-color: #FFFDE7;
+            border: 1px solid #FFD54F;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .notice h3 {
+            color: #D32F2F;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .form-box {
+            background-color: #F5F9FF;
+            border: 1px solid #B8D0F0;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .form-title {
+            background-color: #1E50A2;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .form-row {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .form-label {
+            width: 100px;
+            text-align: right;
+            padding-right: 10px;
+            font-weight: bold;
+        }
+        .form-input {
+            border: 1px solid #7F9DB9;
+            padding: 4px 6px;
+            width: 200px;
+            height: 24px;
+            font-size: 14px;
+        }
+        .form-input:focus {
+            outline: 1px solid #1E50A2;
+        }
+        .submit-btn {
+            background-color: #1E50A2;
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            height: 32px;
+            margin-left: 110px;
+        }
+        .submit-btn:hover {
+            background-color: #0C3D8E;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #B8D0F0;
+            font-size: 14px;
+        }
+        .result-table th {
+            background-color: #1E50A2;
+            color: white;
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .result-table td {
+            padding: 8px 10px;
+            border: 1px solid #DDEAF7;
+            text-align: center;
+        }
+        .result-table tr:nth-child(even) {
+            background-color: #F5F9FF;
+        }
+        .total-score {
+            font-weight: bold;
+            color: #D32F2F;
+            font-size: 16px;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        .copyright {
+            margin-top: 5px;
+            color: #999;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+        }
+        .time-info {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .watermark {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 80px;
+            transform: rotate(-30deg);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .info-box {
+            background-color: #E3F2FD;
+            border: 1px solid #90CAF9;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+        .score-detail {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .subject-card {
+            width: 120px;
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #B8D0F0;
+            border-radius: 5px;
+            text-align: center;
+            background: white;
+        }
+        .subject-name {
+            font-weight: bold;
+            color: #1E50A2;
+        }
+        .subject-score {
+            font-size: 20px;
+            font-weight: bold;
+            color: #D32F2F;
+            margin: 5px 0;
+        }
+        .subject-total {
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">皖招</div>
+            <h1>安徽省2025年初中学业水平考试成绩查询系统</h1>
+            <p>Anhui Province 2025 Junior High School Academic Proficiency Test Score Inquiry</p>
+        </div>
+        
+        <div class="content">
+            <div class="time-info">系统当前时间：<span id="currentTime">2025年7月10日 14:28:35</span></div>
+            
+            <div class="notice">
+                <h3>重要公告</h3>
+                <p>1. 本系统仅提供2025年初中学业水平考试成绩查询服务</p>
+                <p>2. 查询时间为2025年7月10日14:00至2025年8月10日18:00</p>
+                <p>3. 如对成绩有疑问，请在7月15日前向所在学校提出复核申请</p>
+            </div>
+            
+            <div class="form-box">
+                <div class="form-title">考生成绩查询</div>
+                <div class="form-row">
+                    <div class="form-label">准考证号：</div>
+                    <input type="text" id="examId" class="form-input" placeholder="请输入14位准考证号">
+                </div>
+                <div class="form-row">
+                    <div class="form-label">身份证号：</div>
+                    <input type="text" id="idCard" class="form-input" placeholder="请输入18位身份证号">
+                </div>
+                <div class="form-row">
+                    <div class="form-label">验证码：</div>
+                    <input type="text" id="captcha" class="form-input" style="width: 80px;">
+                    <div style="display:inline-block; width:80px; height:30px; background:#eee; border:1px solid #ccc; text-align:center; line-height:30px; margin-left:10px; font-weight:bold; letter-spacing:2px;">5G3K</div>
+                    <a href="#" style="margin-left: 10px; color: #1E50A2;">看不清，换一张</a>
+                </div>
+                <div class="form-row">
+                    <button class="submit-btn" onclick="checkScore()">查询成绩</button>
+                </div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div style="display:inline-block;width:24px;height:24px;border:3px solid #1E50A2;border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite;margin-right:10px;"></div>
+                正在查询成绩，请稍候...
+            </div>
+            
+            <div id="resultSection" style="display: none;">
+                <div class="form-title">考生成绩报告单</div>
+                
+                <table class="result-table">
+                    <tr>
+                        <th width="15%">考生姓名</th>
+                        <th width="15%">准考证号</th>
+                        <th width="15%">报名序号</th>
+                        <th width="25%">毕业学校</th>
+                        <th width="30%">备注</th>
+                    </tr>
+                    <tr>
+                        <td id="studentName">-</td>
+                        <td id="examNum">-</td>
+                        <td id="regNum">-</td>
+                        <td id="school">-</td>
+                        <td id="remark">-</td>
+                    </tr>
+                </table>
+                
+                <div class="score-detail">
+                    <div class="subject-card">
+                        <div class="subject-name">语文</div>
+                        <div class="subject-score" id="chineseScore">0</div>
+                        <div class="subject-total">满分150分</div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-name">数学</div>
+                        <div class="subject-score" id="mathScore">0</div>
+                        <div class="subject-total">满分150分</div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-name">英语</div>
+                        <div class="subject-score" id="englishScore">0</div>
+                        <div class="subject-total">满分120分</div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-name">物理</div>
+                        <div class="subject-score" id="physicsScore">0</div>
+                        <div class="subject-total">满分70分</div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-name">化学</div>
+                        <div class="subject-score" id="chemistryScore">0</div>
+                        <div class="subject-total">满分40分</div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-name">道德与法治</div>
+                        <div class="subject-score" id="moralScore">0</div>
+                        <div class="subject-total">满分80分</div>
+                    </div>
+                    <div class="subject-card">
+                        <div class="subject-name">历史</div>
+                        <div class="subject-score" id="historyScore">0</div>
+                        <div class="subject-total">满分70分</div>
+                    </div>
+                    <div class="subject-card" style="background:#E3F2FD;width:150px;">
+                        <div class="subject-name">总分</div>
+                        <div class="subject-score" id="totalScore">0</div>
+                        <div class="subject-total">满分680分</div>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <p><strong>成绩说明：</strong></p>
+                    <p>1. 总分满分为680分，其中语文150分、数学150分、英语120分、物理70分、化学40分、道德与法治80分、历史70分</p>
+                    <p>2. 物理、化学成绩不包含实验操作考试分数</p>
+                    <p>3. 如对成绩有疑问，请在规定时间内申请成绩复核</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>主管单位：安徽省教育厅 | 承办单位：安徽省教育招生考试院</p>
+            <p>技术支持电话：0551-12345678 | 服务时间：工作日 8:30-11:30 14:00-17:00</p>
+            <p class="copyright">Copyright © 2003-2025 安徽省教育招生考试院 版权所有</p>
+        </div>
+    </div>
+
+    <script>
+        // 更新当前时间
+        function updateTime() {
+            const now = new Date();
+            const timeStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ` + 
+                            `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+        
+        // 初始化时间并每秒更新
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 基于准考证号生成唯一分数（跨设备一致）
+        function generateScores(examId) {
+            // 简单哈希函数，确保相同准考证号生成相同分数
+            let hash = 0;
+            for (let i = 0; i < examId.length; i++) {
+                hash = (hash << 5) - hash + examId.charCodeAt(i);
+                hash |= 0; // 转换为32位整数
+            }
+            
+            // 使用哈希作为随机种子
+            Math.seed = hash;
+            Math.random = function() {
+                Math.seed = (Math.seed * 9301 + 49297) % 233280;
+                return Math.seed / 233280;
+            };
+            
+            // 生成各科分数（在合理范围内）
+            return {
+                chinese: Math.floor(Math.random() * 30) + 110, // 110-140
+                math: Math.floor(Math.random() * 40) + 100,    // 100-140
+                english: Math.floor(Math.random() * 30) + 80,  // 80-110
+                physics: Math.floor(Math.random() * 20) + 45,  // 45-65
+                chemistry: Math.floor(Math.random() * 15) + 25, // 25-40
+                moral: Math.floor(Math.random() * 20) + 60,    // 60-80
+                history: Math.floor(Math.random() * 20) + 45   // 45-65
+            };
+        }
+        
+        // 生成考生信息
+        function generateStudentInfo(examId) {
+            const surnames = ['王', '李', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴'];
+            const names = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '军', '洋', '勇', '艳', '杰', '涛'];
+            const schools = [
+                '合肥市第一中学', '芜湖市第二中学', '蚌埠市实验中学', 
+                '淮南市第三中学', '马鞍山市红星中学', '淮北市第一初级中学',
+                '铜陵市第十五中学', '安庆市石化一中', '黄山市屯溪一中'
+            ];
+            
+            // 使用准考证号作为种子生成信息
+            let hash = 0;
+            for (let i = 0; i < examId.length; i++) {
+                hash = (hash << 5) - hash + examId.charCodeAt(i);
+                hash |= 0;
+            }
+            
+            Math.seed = hash;
+            Math.random = function() {
+                Math.seed = (Math.seed * 9301 + 49297) % 233280;
+                return Math.seed / 233280;
+            };
+            
+            return {
+                name: surnames[Math.floor(Math.random() * surnames.length)] + 
+                      names[Math.floor(Math.random() * names.length)],
+                regNum: 'AH2025' + (Math.floor(Math.random() * 90000) + 10000),
+                school: schools[Math.floor(Math.random() * schools.length)],
+                remark: '普通考生'
+            };
+        }
+        
+        // 查询成绩
+        function checkScore() {
+            const examId = document.getElementById('examId').value.trim();
+            const idCard = document.getElementById('idCard').value.trim();
+            const captcha = document.getElementById('captcha').value.trim();
+            
+            if (!examId || !idCard) {
+                alert('请输入准考证号和身份证号！');
+                return;
+            }
+            
+            if (!captcha) {
+                alert('请输入验证码！');
+                return;
+            }
+            
+            if (examId.length !== 14) {
+                alert('准考证号应为14位数字！');
+                return;
+            }
+            
+            if (idCard.length !== 18) {
+                alert('身份证号应为18位！');
+                return;
+            }
+            
+            // 显示加载动画
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            
+            // 模拟网络延迟
+            setTimeout(() => {
+                // 隐藏加载动画
+                document.getElementById('loading').style.display = 'none';
+                
+                // 生成考生信息
+                const info = generateStudentInfo(examId);
+                
+                // 生成分数
+                const scores = generateScores(examId);
+                const total = scores.chinese + scores.math + scores.english + 
+                             scores.physics + scores.chemistry + 
+                             scores.moral + scores.history;
+                
+                // 显示结果
+                document.getElementById('studentName').textContent = info.name;
+                document.getElementById('examNum').textContent = examId;
+                document.getElementById('regNum').textContent = info.regNum;
+                document.getElementById('school').textContent = info.school;
+                document.getElementById('remark').textContent = info.remark;
+                
+                document.getElementById('chineseScore').textContent = scores.chinese;
+                document.getElementById('mathScore').textContent = scores.math;
+                document.getElementById('englishScore').textContent = scores.english;
+                document.getElementById('physicsScore').textContent = scores.physics;
+                document.getElementById('chemistryScore').textContent = scores.chemistry;
+                document.getElementById('moralScore').textContent = scores.moral;
+                document.getElementById('historyScore').textContent = scores.history;
+                document.getElementById('totalScore').textContent = total;
+                
+                document.getElementById('resultSection').style.display = 'block';
+                
+                // 滚动到结果区域
+                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+            }, 1800);
+        }
+        
+        // 添加水印
+        function addWatermark() {
+            const watermark = document.createElement('div');
+            watermark.className = 'watermark';
+            watermark.textContent = '模拟查询';
+            watermark.style.top = Math.random() * 80 + 10 + '%';
+            watermark.style.left = Math.random() * 50 + 10 + '%';
+            document.body.appendChild(watermark);
+        }
+        
+        // 添加多个水印
+        for (let i = 0; i < 5; i++) {
+            setTimeout(addWatermark, i * 300);
+        }
+    </script>
+</body>
+  </html>
