@@ -1,0 +1,602 @@
+完美。所有页面已按统一风格重写：浅蓝背景、无圆角、衬线字体、纯文字排版、无图标。以下是完整文件清单及代码。
+
+---
+
+📁 最终文件结构
+
+```
+HFS根目录/
+├── index.html           ← 主页（固定顶栏）
+├── novel.html           ← 小说网站
+├── sub.html             ← 书籍提交
+├── guidance.html        ← 极域辅助
+├── hfs_template.html    ← HFS自定义模板（可选，美化下载页）
+└── novels/              ← （你的小说文件夹，可选）
+```
+
+---
+
+1. index.html
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息课文件传输站点</title>
+    <style>
+        :root {
+            --bg: #dce8f2;
+            --panel: #eaf1f8;
+            --text: #1a1d28;
+            --muted: #5c6370;
+            --accent: #1a3a5c;
+            --link: #b22222;
+            --border: #9aadbe;
+            --hover-bg: #c5d5e6;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Noto Serif SC", "Songti SC", "SimSun", "Georgia", serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: baseline; justify-content: space-between;
+            padding: 18px 36px;
+        }
+        .navbar .brand .title {
+            font-size: 19px; font-weight: 700; letter-spacing: 2px;
+            color: var(--accent); text-transform: uppercase;
+        }
+        .navbar .brand .coauthor {
+            font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 1px;
+        }
+        .navbar .nav-links { display: flex; gap: 28px; }
+        .navbar .nav-links a {
+            color: var(--accent); text-decoration: none;
+            font-size: 14px; font-weight: 600; letter-spacing: 1px;
+            border-bottom: 2px solid transparent; transition: 0.2s;
+        }
+        .navbar .nav-links a:hover { border-bottom-color: var(--link); }
+
+        .main-content { margin-top: 110px; padding: 32px 40px 60px; }
+
+        .announcement {
+            border: 1px solid var(--border);
+            background: var(--panel);
+            padding: 28px 34px;
+            margin-bottom: 48px;
+            position: relative;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
+        }
+        .announcement::before {
+            content: "公告";
+            position: absolute; top: -12px; left: 24px;
+            background: var(--bg); padding: 0 12px;
+            font-size: 13px; letter-spacing: 4px; color: var(--accent); font-weight: 700;
+        }
+        .announcement p { margin: 10px 0; }
+        .announcement a {
+            color: var(--link); text-decoration: none; border-bottom: 1px dotted var(--link);
+        }
+        .announcement a:hover { border-bottom-style: solid; }
+
+        .section-title {
+            font-size: 15px; font-weight: 700; letter-spacing: 3px;
+            color: var(--accent); margin-bottom: 18px;
+            padding-bottom: 8px; border-bottom: 1px solid var(--border);
+            display: inline-block;
+        }
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 0; margin-bottom: 48px; }
+        .menu-list li { border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .menu-list a {
+            display: flex; align-items: baseline; justify-content: space-between;
+            padding: 16px 8px; text-decoration: none; color: var(--accent);
+            font-size: 17px; font-weight: 600; letter-spacing: 1px; transition: 0.15s;
+        }
+        .menu-list a:hover { background: var(--hover-bg); padding-left: 16px; }
+        .menu-list a .desc { font-size: 12px; color: var(--muted); font-weight: 400; letter-spacing: 0; }
+
+        .footer {
+            margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 11px; color: var(--muted); letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <div class="brand">
+        <div class="title">信息课文件传输站点</div>
+        <div class="coauthor">&lt;co-author: deepseek V4&gt;</div>
+    </div>
+    <nav class="nav-links">
+        <a href="#">资源下载</a>
+        <a href="#">网友聊天</a>
+        <a href="#">文件上传</a>
+        <a href="novel.html">小说网站</a>
+    </nav>
+</header>
+
+<div class="main-content">
+    <div class="announcement">
+        <p>① <a href="https://192.168.0.15/non">链接 · 文字说明</a></p>
+        <p>② 小说已更新 —— <a href="https://192.168.0.15/non">点击阅览</a></p>
+    </div>
+
+    <div class="section-title">功能区</div>
+    <ul class="menu-list">
+        <li><a href="#">资源下载 <span class="desc">软件 · 游戏 · 课件</span></a></li>
+        <li><a href="#">网友聊天 <span class="desc">局域网留言板</span></a></li>
+        <li><a href="#">文件上传 <span class="desc">分享你的文件</span></a></li>
+        <li><a href="novel.html">小说网站 <span class="desc">PDF · TXT 在线阅览</span></a></li>
+    </ul>
+
+    <div class="footer">仅供局域网内使用</div>
+</div>
+
+</body>
+</html>
+```
+
+---
+
+2. novel.html
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小说网站</title>
+    <style>
+        :root {
+            --bg: #dce8f2;
+            --panel: #eaf1f8;
+            --text: #1a1d28;
+            --muted: #5c6370;
+            --accent: #1a3a5c;
+            --link: #b22222;
+            --border: #9aadbe;
+            --hover-bg: #c5d5e6;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Noto Serif SC", "Songti SC", "SimSun", "Georgia", serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+        }
+        .header {
+            padding: 40px 40px 10px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        .header h1 { font-size: 28px; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+        .header p { margin-top: 8px; color: var(--muted); }
+        .header a { color: var(--link); text-decoration: none; border-bottom: 1px dotted var(--link); }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px; padding: 0 40px 60px;
+        }
+        .card {
+            border: 1px solid var(--border);
+            background: var(--panel);
+            padding: 0 0 12px 0;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card:hover { background: var(--hover-bg); }
+        .card .cover {
+            width: 100%; height: 240px;
+            background: #f0f4f8;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .card .cover embed, .card .cover iframe {
+            width: 100%; height: 100%; border: none;
+        }
+        .card .cover .placeholder {
+            color: var(--muted); font-size: 14px;
+        }
+        .card .book-title {
+            padding: 10px 12px 0; font-size: 15px; font-weight: 700;
+            color: var(--accent); text-align: center;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .card .book-author {
+            font-size: 12px; color: var(--muted); text-align: center; margin-top: 2px;
+        }
+        /* 弹窗 */
+        .modal {
+            display: none; position: fixed; top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.4); z-index:2000;
+            align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal .dialog {
+            background: var(--bg); border: 1px solid var(--border);
+            padding: 32px 36px; min-width: 280px; box-shadow: 6px 6px 0 rgba(0,0,0,0.05);
+        }
+        .modal .dialog p { font-size: 17px; margin-bottom: 24px; font-weight: 700; }
+        .modal button {
+            display: block; width: 100%; margin-top: 12px;
+            padding: 12px; font-size: 15px; font-weight: 600;
+            background: transparent; border: 1px solid var(--accent);
+            color: var(--accent); cursor: pointer; letter-spacing: 1px;
+        }
+        .modal button:hover { background: var(--accent); color: white; }
+        .modal .cancel {
+            text-align: center; margin-top: 14px; font-size: 13px;
+            color: var(--muted); cursor: pointer;
+        }
+        .modal .cancel:hover { color: var(--link); }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>小说书架</h1>
+    <p>欢迎来到这里。想看的书？<a href="sub.html">提交推荐</a></p>
+</div>
+
+<div class="grid" id="bookGrid">
+    <div class="card"><div class="cover"><span class="placeholder">加载中...</span></div></div>
+</div>
+
+<div class="modal" id="actionModal">
+    <div class="dialog">
+        <p id="modalTitle"></p>
+        <button id="btnDownload">下载</button>
+        <button id="btnRead">阅览</button>
+        <div class="cancel" onclick="closeModal()">取消</div>
+    </div>
+</div>
+
+<script>
+const SCAN_URL = "https://192.168.0.15/non";
+let currentFile = null;
+
+function extractTitle(filename) {
+    const match = filename.match(/《(.+?)》/);
+    return match ? match[1] : filename.replace(/\.(pdf|txt)$/i, '');
+}
+
+function extractAuthor(filename) {
+    const match = filename.match(/〔(.+?)〕/) || filename.match(/\((.+?)\)/);
+    return match ? match[1] : '';
+}
+
+async function loadBooks() {
+    const grid = document.getElementById('bookGrid');
+    try {
+        const resp = await fetch(SCAN_URL);
+        const html = await resp.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = [...doc.querySelectorAll('a')];
+        const books = links
+            .map(a => a.getAttribute('href'))
+            .filter(h => h && (h.toLowerCase().endsWith('.pdf') || h.toLowerCase().endsWith('.txt')));
+
+        if (books.length === 0) {
+            grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;">暂无书籍</p>';
+            return;
+        }
+
+        grid.innerHTML = books.map(f => {
+            const title = extractTitle(f);
+            const author = extractAuthor(f);
+            const isPDF = f.toLowerCase().endsWith('.pdf');
+            const coverHTML = isPDF
+                ? `<embed src="${SCAN_URL}/${encodeURI(f)}" type="application/pdf" width="100%" height="100%">`
+                : `<span class="placeholder">TXT 文本</span>`;
+            return `
+            <div class="card" onclick="openBook('${f.replace(/'/g, "\\'")}', '${title.replace(/'/g, "\\'")}')">
+                <div class="cover">${coverHTML}</div>
+                <div class="book-title">${title}</div>
+                ${author ? `<div class="book-author">${author}</div>` : ''}
+            </div>`;
+        }).join('');
+    } catch(e) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--muted);">加载失败：'+e.message+'</p>';
+    }
+}
+
+function openBook(filename, title) {
+    currentFile = { filename, title, url: SCAN_URL + '/' + filename };
+    document.getElementById('modalTitle').textContent = '《' + title + '》';
+    document.getElementById('actionModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('actionModal').classList.remove('active');
+    currentFile = null;
+}
+
+document.getElementById('btnDownload').addEventListener('click', () => {
+    if (currentFile) {
+        const a = document.createElement('a');
+        a.href = currentFile.url;
+        a.download = currentFile.filename;
+        a.click();
+        closeModal();
+    }
+});
+
+document.getElementById('btnRead').addEventListener('click', () => {
+    if (currentFile) {
+        window.open(currentFile.url, '_blank');
+        closeModal();
+    }
+});
+
+document.getElementById('actionModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+loadBooks();
+</script>
+</body>
+</html>
+```
+
+---
+
+3. sub.html
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提交想看的书</title>
+    <style>
+        :root {
+            --bg: #dce8f2;
+            --panel: #eaf1f8;
+            --text: #1a1d28;
+            --muted: #5c6370;
+            --accent: #1a3a5c;
+            --link: #b22222;
+            --border: #9aadbe;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Noto Serif SC", "Songti SC", "SimSun", "Georgia", serif;
+            background: var(--bg); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 20px;
+        }
+        .form-card {
+            background: var(--panel); border: 1px solid var(--border);
+            padding: 36px 32px; width: 400px; max-width: 100%;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
+        }
+        .form-card h2 {
+            font-size: 22px; font-weight: 700; letter-spacing: 2px;
+            color: var(--accent); margin-bottom: 24px;
+        }
+        label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--accent); margin-bottom: 6px; letter-spacing: 1px;
+        }
+        input, textarea {
+            width: 100%; padding: 10px 12px;
+            border: 1px solid var(--border); background: white;
+            font-family: inherit; font-size: 14px; margin-bottom: 20px;
+            resize: vertical;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+        button {
+            width: 100%; padding: 14px; font-size: 15px; font-weight: 700;
+            background: var(--accent); color: white; border: none;
+            letter-spacing: 2px; cursor: pointer; transition: 0.2s;
+        }
+        button:hover { background: #0e2640; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        #status { margin-top: 16px; font-size: 13px; text-align: center; }
+        .success { color: #1a5c1a; }
+        .error { color: #b22222; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: var(--link); font-size: 13px; text-decoration: none; border-bottom: 1px dotted var(--link); }
+    </style>
+</head>
+<body>
+<div class="form-card">
+    <a href="novel.html" class="back-link">← 返回书架</a>
+    <h2>想看的书</h2>
+    <label>书名</label>
+    <input type="text" id="bookName" placeholder="例如：三体">
+    <label>作者（可选）</label>
+    <input type="text" id="author" placeholder="例如：刘慈欣">
+    <label>备注（可选）</label>
+    <textarea id="note" rows="3" placeholder="为什么想看..."></textarea>
+    <button id="submitBtn">提交</button>
+    <div id="status"></div>
+</div>
+
+<script>
+(async function(){
+    let clientIP = 'unknown';
+    try {
+        const r = await fetch('https://api.ipify.org?format=json', {signal: AbortSignal.timeout(2000)});
+        const d = await r.json();
+        clientIP = d.ip.replace(/\./g, '-');
+    } catch(e) {
+        clientIP = 'pc-' + Math.random().toString(36).substring(2,8);
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', async function(){
+        const btn = this;
+        const book = document.getElementById('bookName').value.trim();
+        const author = document.getElementById('author').value.trim();
+        const note = document.getElementById('note').value.trim();
+        const st = document.getElementById('status');
+        if (!book) {
+            st.textContent = '请填写书名';
+            st.className = 'error';
+            return;
+        }
+        const content = `书名：${book}\n作者：${author || '未填写'}\n备注：${note || '无'}\n时间：${new Date().toLocaleString()}\nIP：${clientIP}`;
+        const file = new File([content], clientIP + '.txt', {type: 'text/plain'});
+        const fd = new FormData();
+        fd.append('file', file);
+
+        btn.disabled = true;
+        btn.textContent = '提交中...';
+        st.textContent = '';
+        st.className = '';
+
+        try {
+            const resp = await fetch('/upload', {method:'POST', body:fd, signal: AbortSignal.timeout(10000)});
+            if (resp.ok) {
+                st.textContent = '提交成功，感谢推荐。';
+                st.className = 'success';
+                document.getElementById('bookName').value = '';
+                document.getElementById('author').value = '';
+                document.getElementById('note').value = '';
+            } else throw new Error('HTTP ' + resp.status);
+        } catch(e) {
+            st.textContent = '提交失败：' + e.message;
+            st.className = 'error';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '提交';
+        }
+    });
+})();
+</script>
+</body>
+</html>
+```
+
+---
+
+4. guidance.html
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极域辅助</title>
+    <style>
+        :root {
+            --bg: #dce8f2;
+            --panel: #eaf1f8;
+            --text: #1a1d28;
+            --muted: #5c6370;
+            --accent: #1a3a5c;
+            --link: #b22222;
+            --border: #9aadbe;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: "Noto Serif SC", "Songti SC", "SimSun", "Georgia", serif;
+            background: var(--bg); color: var(--text); padding: 40px;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { font-size: 24px; letter-spacing: 2px; color: var(--accent); margin-bottom: 20px; }
+        h2 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+        .code {
+            background: var(--panel); border: 1px solid var(--border);
+            padding: 14px 18px; font-family: "Courier New", monospace;
+            font-size: 14px; margin: 10px 0; letter-spacing: 0;
+        }
+        button {
+            padding: 10px 24px; font-size: 14px; font-weight: 600;
+            background: var(--accent); color: white; border: none;
+            letter-spacing: 1px; cursor: pointer; margin-top: 8px;
+        }
+        button:hover { background: #0e2640; }
+        .warning { color: #b22222; font-weight: 700; }
+        .note { font-size: 13px; color: var(--muted); margin-top: 8px; }
+        a { color: var(--link); text-decoration: none; border-bottom: 1px dotted var(--link); }
+        hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+        ul { margin-left: 20px; line-height: 2; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>极域辅助工具</h1>
+
+    <h2>结束学生端进程</h2>
+    <p>点击按钮复制命令，手动粘贴到 CMD 运行：</p>
+    <div class="code">taskkill /im StudentMain.exe /f</div>
+    <button id="killBtn">复制命令</button>
+    <p class="note">仅结束进程，不影响网络，教师可重新启动。</p>
+
+    <h2>防止被控屏（研究用）</h2>
+    <ul>
+        <li>防火墙出站规则：阻止 StudentMain.exe 联网</li>
+        <li>修改 hosts：<code>127.0.0.1 教师机IP</code></li>
+        <li>停止服务：<code>sc stop "StudentService"</code></li>
+    </ul>
+    <p class="warning">注意：仅用于技术学习，请遵守课堂纪律。</p>
+
+    <h2>恢复</h2>
+    <div class="code">sc config "StudentService" start=auto<br>sc start "StudentService"</div>
+
+    <hr>
+    <p class="note">
+        <a href="index.html">← 返回首页</a>
+    </p>
+</div>
+
+<script>
+document.getElementById('killBtn').addEventListener('click', function(){
+    const cmd = 'taskkill /im StudentMain.exe /f';
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(cmd).then(() => alert('命令已复制，打开 CMD 粘贴运行。'));
+    } else {
+        prompt('手动复制命令：', cmd);
+    }
+});
+</script>
+</body>
+</html>
+```
+
+---
+
+5. HFS 自定义模板（hfs_template.html）
+
+在 HFS 中：菜单 → HTML template → Edit，粘贴以下内容保存。会自动美化所有目录页面。
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>%folder%</title>
+    <style>
+        body { font-family:"Noto Serif SC","SimSun",serif; background:#dce8f2; color:#1a1d28; padding:30px; }
+        a { color:#b22222; text-decoration:none; border-bottom:1px dotted #b22222; }
+        a:hover { border-bottom-style:solid; }
+        .file-list { max-width:700px; margin:0 auto; }
+        .item { display:flex; align-items:baseline; padding:10px 0; border-bottom:1px solid #9aadbe; }
+        .item .name { flex:1; font-size:15px; font-weight:600; color:#1a3a5c; }
+        .item .size { font-size:12px; color:#5c6370; margin-left:20px; }
+        h1 { font-size:22px; letter-spacing:2px; color:#1a3a5c; margin-bottom:20px; }
+    </style>
+</head>
+<body>
+<h1>%folder%</h1>
+<div class="file-list">%list%</div>
+</body>
+</html>
+```
+
+---
+
+以上全部文件，拷贝到 HFS 根目录即可使用。所有页面统一风格，浅蓝背景、直角、无图标、衬线字体，文艺且实用。
