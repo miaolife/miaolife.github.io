@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定远实时天气</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e6f0f9;  /* 浅蓝背景，类似原网站外围色调 */
+            font-family: 'Microsoft YaHei', '宋体', Arial, sans-serif;
+            padding: 20px;
+        }
+
+        /* 完全无圆角，硬边框，传统风格 */
+        .weather-panel {
+            width: 320px;
+            background: #ffffff;
+            border: 1px solid #b8d4f0;
+            margin: 0 auto;
+            box-shadow: none;
+        }
+
+        /* 头部浅蓝条，无圆角，无渐变 */
+        .panel-header {
+            background: #0A5BAC;
+            padding: 10px 15px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: normal;
+            border-bottom: 1px solid #0a4a8a;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .location {
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .location:before {
+            content: "📍";
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        .update-time {
+            font-size: 12px;
+            background: none;
+            padding: 0;
+            color: #e0f0ff;
+        }
+
+        /* 温度主体区域 */
+        .temp-main {
+            text-align: center;
+            padding: 25px 15px 20px;
+            background: #fefeff;
+            border-bottom: 1px solid #e5edf5;
+        }
+
+        .temp-number {
+            font-size: 72px;
+            font-weight: normal;
+            color: #1a3e50;
+            line-height: 1.1;
+            font-family: Arial, sans-serif;
+        }
+
+        .temp-number sup {
+            font-size: 28px;
+            font-weight: normal;
+            margin-left: 4px;
+        }
+
+        .weather-desc {
+            margin-top: 8px;
+            font-size: 16px;
+            color: #2c5a74;
+        }
+
+        .weather-icon {
+            font-size: 44px;
+            margin-top: 5px;
+        }
+
+        /* 底部信息，无圆角，传统分割线 */
+        .panel-footer {
+            background: #fafdff;
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #3a6e8c;
+            border-top: 1px solid #e2edf7;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 仿原网站的辅助样式 */
+        .note {
+            font-size: 11px;
+            color: #7f9cbb;
+            text-align: center;
+            margin-top: 8px;
+            border-top: 1px solid #eef3fc;
+            padding: 8px;
+            background: #f8fbfe;
+        }
+
+        /* 完全禁用任何圆角 */
+        .weather-panel, .panel-header, .temp-main, .panel-footer, .note {
+            border-radius: 0px;
+        }
+
+        /* 去除按钮感，无阴影 */
+        a, div {
+            -webkit-appearance: none;
+        }
+    </style>
+</head>
+<body>
+<div class="weather-panel">
+    <div class="panel-header">
+        <span class="location">定远</span>
+        <span class="update-time" id="updateTimeDisplay">--:00 更新</span>
+    </div>
+    <div class="temp-main">
+        <div class="temp-number">
+            31<sup>°C</sup>
+        </div>
+        <div class="weather-icon">☀️</div>
+        <div class="weather-desc">晴 · 空气清新</div>
+    </div>
+    <div class="panel-footer">
+        <span class="info-item">🌬️ 东南风 3-4级</span>
+        <span class="info-item">💧 湿度 48%</span>
+    </div>
+    <div class="note">
+        实时气温 | 数据来源 中国天气网
+    </div>
+</div>
+
+<script>
+    // 更新时间动态设置为当前小时:00
+    function refreshUpdateTime() {
+        var now = new Date();
+        var hour = now.getHours().toString().padStart(2, '0');
+        var timeStr = hour + ':00';
+        var el = document.getElementById('updateTimeDisplay');
+        if (el) {
+            el.innerText = timeStr + ' 更新';
+        }
+    }
+    refreshUpdateTime();
+    // 每小时整点自动刷新显示（避免跨小时后显示错误）
+    setInterval(function() {
+        var now = new Date();
+        var hour = now.getHours().toString().padStart(2, '0');
+        var targetStr = hour + ':00 更新';
+        var curEl = document.getElementById('updateTimeDisplay');
+        if (curEl && curEl.innerText !== targetStr) {
+            curEl.innerText = targetStr;
+        }
+    }, 60000);
+</script>
+</body>
+</html>
