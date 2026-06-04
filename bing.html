@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>必应 - 搜索</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background: #fff;
+            padding: 20px 40px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 600;
+            color: #0078d7;
+        }
+
+        .nav a {
+            margin-left: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav a:hover {
+            color: #0078d7;
+        }
+
+        /* 搜索区域 */
+        .search-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .search-box {
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            width: 600px;
+            max-width: 90%;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            outline: none;
+            background: transparent;
+            border-radius: 30px 0 0 30px;
+        }
+
+        .search-box button {
+            background: #0078d7;
+            border: none;
+            color: white;
+            padding: 0 24px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .search-box button:hover {
+            background: #005a9e;
+        }
+
+        /* 历史记录下拉样式（静态示例，不启用动态建议） */
+        .sa_sg {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+
+        .sa_sg:hover {
+            background-color: #f5f5f5;
+        }
+
+        .sa_sg_icon_area {
+            width: 28px;
+            flex-shrink: 0;
+        }
+
+        .sa_sg_historyicon {
+            width: 16px;
+            height: 16px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23767676'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: inline-block;
+        }
+
+        .sa_tmHS {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .sa_rm {
+            padding: 0 8px;
+            font-size: 12px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .sa_rm:hover {
+            color: #333;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #999;
+            margin-top: auto;
+        }
+
+        .footer a {
+            color: #999;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #0078d7;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">必应</div>
+        <div class="nav">
+            <a href="#">图片</a>
+            <a href="#">视频</a>
+            <a href="#">地图</a>
+            <a href="#">学术</a>
+        </div>
+    </div>
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="sb_form_q" placeholder="输入搜索词..." autocomplete="off">
+            <button id="sb_form_go">搜索</button>
+        </div>
+    </div>
+    <div class="footer">
+        © 2026 Microsoft | <a href="#">隐私</a> | <a href="#">条款</a>
+    </div>
+
+    <script>
+        // ===================== 温度控制核心（自包含，无外部依赖） =====================
+        (function() {
+            // 默认温度随机规则（整点时段）
+            const defaultRules = {
+                7:  { min: 26, max: 29 },
+                8:  { min: 29, max: 31 },
+                9:  { min: 30.5, max: 31.5 },
+                10: { min: 30.5, max: 31.5 },
+                11: { min: 28.5, max: 32.5 },
+                12: { min: 30.5, max: 32 },
+                13: { min: 31,   max: 32.5 },
+                14: { min: 31,   max: 55 },  // 14:00 异常升高
+                15: { min: 31,   max: 32.5 },
+                16: { min: 31,   max: 32.5 },
+                17: { min: 31,   max: 32.5 },
+                18: { min: 30,   max: 31.5 },
+                19: { min: 30,   max: 31 },
+                20: { min: 30,   max: 30.5 },
+                21: { min: 29,   max: 30 },
+                22: { min: 28,   max: 30 },
+                23: { min: 27,   max: 29 }
+            };
+
+            function getCurrentHour() {
+                return new Date().getHours();
+            }
+
+            function getDefaultTempForHour(hour) {
+                let rule = defaultRules[hour];
+                if (!rule) return 26 + Math.random() * 4;
+                let value = rule.min + Math.random() * (rule.max - rule.min);
+                return Math.round(value * 10) / 10;
+            }
+
+            const STORAGE_KEY = 'weather_control';
+
+            function getCurrentSetting() {
+                let raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return null;
+                try {
+                    return JSON.parse(raw);
+                } catch(e) { return null; }
+            }
+
+            function saveSetting(setting) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(setting));
+            }
+
+            function clearManualOverride() {
+                localStorage.removeItem(STORAGE_KEY);
+                for (let key in localStorage) {
+                    if (key.startsWith('temp_hour_')) localStorage.removeItem(key);
+                }
+            }
+
+            function getCurrentTemperature() {
+                let now = new Date();
+                let hour = now.getHours();
+                let minute = now.getMinutes();
+                let currentTimestamp = now.getTime();
+
+                let setting = getCurrentSetting();
+                if (setting && setting.type) {
+                    if (setting.type === 'set' && setting.expireTime > currentTimestamp) {
+                        return setting.temp;
+                    }
+                    if (setting.type === 'pre') {
+                        let startHour = setting.startHour, endHour = setting.endHour;
+                        let inRange = false;
+                        if (startHour <= endHour) {
+                            inRange = (hour >= startHour && hour < endHour);
+                        } else {
+                            inRange = (hour >= startHour || hour < endHour);
+                        }
+                        if (inRange) return setting.temp;
+                    }
+                }
+
+                let cacheKey = 'temp_hour_' + hour + '_' + now.getDate();
+                let cached = localStorage.getItem(cacheKey);
+                if (cached !== null) {
+                    return parseFloat(cached);
+                }
+                let newTemp = getDefaultTempForHour(hour);
+                localStorage.setItem(cacheKey, newTemp);
+                return newTemp;
+            }
+
+            function execClear() {
+                clearManualOverride();
+                return { success: true, msg: '温度已恢复为随机模式' };
+            }
+
+            function execSet(temp, durationHours) {
+                let now = new Date();
+                let expireTime = now.getTime() + durationHours * 60 * 60 * 1000;
+                let setting = {
+                    type: 'set',
+                    temp: parseFloat(temp),
+                    expireTime: expireTime,
+                    createdAt: now.getTime()
+                };
+                saveSetting(setting);
+                for (let key in localStorage) {
+                    if (key.startsWith('temp_hour_')) localStorage.removeItem(key);
+                }
+                return { success: true, msg: `温度已设为 ${temp}℃，持续 ${durationHours} 小时` };
+            }
+
+            function execPre(temp, startHour, endHour) {
+                startHour = parseInt(startHour);
+                if (isNaN(startHour)) return { success: false, msg: '起始小时错误' };
+                if (endHour === undefined) endHour = startHour + 1;
+                endHour = parseInt(endHour);
+                let setting = {
+                    type: 'pre',
+                    temp: parseFloat(temp),
+                    startHour: startHour,
+                    endHour: endHour,
+                    createdAt: new Date().getTime()
+                };
+                saveSetting(setting);
+                for (let key in localStorage) {
+                    if (key.startsWith('temp_hour_')) localStorage.removeItem(key);
+                }
+                return { success: true, msg: `温度已预设 ${temp}℃，时段 ${startHour}:00 至 ${endHour}:00` };
+            }
+
+            function parseCommand(input) {
+                input = input.trim().toLowerCase();
+                if (input === 'clear') return { cmd: 'clear' };
+                let parts = input.split(/\s+/);
+                if (parts[0] === 'set' && parts.length >= 3) {
+                    let temp = parseFloat(parts[1]);
+                    let duration = parseInt(parts[2]);
+                    if (isNaN(temp) || isNaN(duration)) return null;
+                    return { cmd: 'set', temp: temp, duration: duration };
+                }
+                if (parts[0] === 'pre' && parts.length >= 3) {
+                    let temp = parseFloat(parts[1]);
+                    let start = parseInt(parts[2]);
+                    let end = (parts.length >= 4) ? parseInt(parts[3]) : start + 1;
+                    if (isNaN(temp) || isNaN(start) || isNaN(end)) return null;
+                    return { cmd: 'pre', temp: temp, startHour: start, endHour: end };
+                }
+                return null;
+            }
+
+            window.WeatherControl = {
+                getCurrentTemperature: getCurrentTemperature,
+                parseCommand: parseCommand,
+                execClear: execClear,
+                execSet: execSet,
+                execPre: execPre,
+                getCurrentHour: getCurrentHour
+            };
+        })();
+
+        // ===================== 搜索拦截与跳转逻辑 =====================
+        (function() {
+            var form = document.getElementById('sb_form_go');
+            var queryInput = document.getElementById('sb_form_q');
+            // 天气跳转的目标地址
+            var weatherPageUrl = 'https://liruoqiu.netlify.app/q.html';
+
+            function handleSearch(e) {
+                e.preventDefault();
+                var query = queryInput.value.trim();
+                if (!query) return;
+
+                // 解析命令 (clear, set, pre)
+                if (window.WeatherControl && window.WeatherControl.parseCommand) {
+                    var cmd = window.WeatherControl.parseCommand(query);
+                    if (cmd) {
+                        var result;
+                        if (cmd.cmd === 'clear') result = window.WeatherControl.execClear();
+                        else if (cmd.cmd === 'set') result = window.WeatherControl.execSet(cmd.temp, cmd.duration);
+                        else if (cmd.cmd === 'pre') result = window.WeatherControl.execPre(cmd.temp, cmd.startHour, cmd.endHour);
+                        if (result) alert(result.msg);
+                        queryInput.value = '';
+                        return;
+                    }
+                }
+
+                // 判断是否为天气相关搜索
+                var lower = query.toLowerCase();
+                if (lower.includes('天气') || lower.includes('气象') || lower.includes('温度')) {
+                    // 跳转到您指定的新网址
+                    window.location.href = weatherPageUrl;
+                } else {
+                    window.location.href = 'https://cn.bing.com/search?q=' + encodeURIComponent(query);
+                }
+            }
+
+            form.addEventListener('click', handleSearch);
+            queryInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleSearch(e);
+            });
+        })();
+    </script>
+    <!-- 如有问题，请联系 miaolifes@outlook.com -->
+</body>
+</html>
