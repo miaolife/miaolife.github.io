@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>404</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: '黑体', 'Microsoft YaHei', sans-serif;
+        }
+        .big-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="big-text" id="resetBtn">防火防盗防陆培清</div>
+    <script>
+        let count = 0;
+        const btn = document.getElementById('resetBtn');
+        btn.onclick = function() {
+            count++;
+            if (count >= 5) {
+                localStorage.removeItem('force_404');
+                // 可选：清除后页面显示变化（不显示任何提示框，直接改文字颜色表示已解除）
+                btn.style.color = '#999';
+                btn.style.cursor = 'default';
+                btn.onclick = null;
+            }
+        };
+    </script>
+</body>
+</html>
